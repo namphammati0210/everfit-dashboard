@@ -146,6 +146,7 @@ function App() {
               column={column} 
               tasks={tasks} 
               index={index}
+              style={{ margin: '20px'}}
             />;
         })}
       </Container>
