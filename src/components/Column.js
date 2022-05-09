@@ -27,7 +27,7 @@ const Column = ({ column, tasks, index }) => {
   return (
     <Container>
       <Title>{column.title}</Title>
-      <Droppable droppableId={column.id} key={index}>
+      <Droppable droppableId={column.id} key={index} type="TASKS">
         {(provided) => (
           <TaskList
             ref={provided.innerRef}

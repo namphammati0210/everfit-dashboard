@@ -18,7 +18,7 @@ function App() {
 
   const onDragEnd = (result) => {
     console.log("🚀 ~ file: App.js ~ line 13 ~ onDragEnd ~ result", result)
-    const { destination, source, draggableId } = result;
+    const { destination, source, draggableId, type } = result;
 
     if(!destination) {
       return;
@@ -30,60 +30,108 @@ function App() {
       return;
     }
 
-    const start = state.columns[source.droppableId];
-    console.log("🚀 ~ file: App.js ~ line 34 ~ onDragEnd ~ start", start)
-    const finish = state.columns[destination.droppableId];
-    console.log("🚀 ~ file: App.js ~ line 36 ~ onDragEnd ~ finish", finish)
+    if(type === 'TASKS') {
+      const start = state.columns[source.droppableId];
+      const finish = state.columns[destination.droppableId];
 
-    if(start.id === finish.id) {
-      console.log('hello1')
-      const newTaskIds = Array.from(start.taskIds);
-      newTaskIds.splice(source.index, 1);
-      newTaskIds.splice(destination.index, 0, draggableId);
+      if(start.id === finish.id) {
+        const newTaskIds = Array.from(start.taskIds);
+        newTaskIds.splice(source.index, 1);
+        newTaskIds.splice(destination.index, 0, draggableId);
 
-      const newColumn = {
-        ...start,
-        taskIds: newTaskIds
+        const newColumn = {
+          ...start,
+          taskIds: newTaskIds
+        }
+
+        setState({
+          ...state,
+          columns: {
+            ...state.columns,
+            [newColumn.id] : newColumn
+          }
+        });
+
+        return;
       }
+
+      //Moving from one list to another
+      const startTaskIds = Array.from(start.taskIds);
+      startTaskIds.splice(source.index, 1);
+      const newStart = {
+        ...start,
+        taskIds: startTaskIds
+      }
+
+      const finishTaskIds = Array.from(finish.taskIds);
+      finishTaskIds.splice(destination.index, 0, draggableId);
+      const newFinish = {
+        ...finish,
+        taskIds: finishTaskIds
+      };
 
       setState({
         ...state,
         columns: {
           ...state.columns,
-          [newColumn.id] : newColumn
+          [newStart.id] : newStart,
+          [newFinish.id] : newFinish,
         }
       });
-
       return;
     }
 
-    console.log('hello2')
-    //Moving from one list to another
-    const startTaskIds = Array.from(start.taskIds);
-    startTaskIds.splice(source.index, 1);
-    const newStart = {
-      ...start,
-      taskIds: startTaskIds
-    }
+    if( type === 'EXERCISES') {
+      const start = state.tasks[source.droppableId];
+      const finish = state.tasks[destination.droppableId];
 
-    const finishTaskIds = Array.from(finish.taskIds);
-    finishTaskIds.splice(destination.index, 0, draggableId);
-    const newFinish = {
-      ...finish,
-      taskIds: finishTaskIds
-    };
-    console.log("🚀 ~ file: App.js ~ line 68 ~ onDragEnd ~ newFinish", newFinish)
+      if(start.id === finish.id) {
+        const newExerciseIds = Array.from(start.exerciseIds);
+        newExerciseIds.splice(source.index, 1);
+        newExerciseIds.splice(destination.index, 0, draggableId);
+        
+        console.log("🚀 ~ file: App.js ~ line 91 ~ onDragEnd ~ newExerciseIds", newExerciseIds)
+        const newTask = {
+          ...start,
+          exerciseIds: newExerciseIds
+        }
 
-    setState({
-      ...state,
-      columns: {
-        ...state.columns,
-         [newStart.id] : newStart,
-         [newFinish.id] : newFinish,
+        setState({
+          ...state,
+          tasks: {
+            ...state.tasks,
+            [newTask.id] : newTask
+          }
+        });
+
+        return;
       }
-    });
 
+      //Moving from one list to another
+      const startExerciseIds = Array.from(start.exerciseIds);
+      startExerciseIds.splice(source.index, 1);
+      const newStart = {
+        ...start,
+        exerciseIds: startExerciseIds
+      }
 
+      const finishExerciseIds = Array.from(finish.exerciseIds);
+      finishExerciseIds.splice(destination.index, 0, draggableId);
+      const newFinish = {
+        ...finish,
+        exerciseIds: finishExerciseIds
+      };
+
+      setState({
+        ...state,
+        tasks: {
+          ...state.tasks,
+          [newStart.id] : newStart,
+          [newFinish.id] : newFinish,
+        }
+      });
+      return;
+    }
   }
 
   return (
