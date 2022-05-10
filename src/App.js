@@ -1,16 +1,20 @@
-import logo from './logo.svg';
 import React, { useState } from 'react';
-import './App.css';
-// import EverfitDashboard from './components/EverfitDashboard';
 import { DragDropContext } from 'react-beautiful-dnd';
+import styledComponents from 'styled-components';
 import intitialData from './initial-data';
 import Column from './components/Column';
-import styledComponents from 'styled-components';
+import { getDaysInWeek, getToday, checkToday } from "./utils/date";
+
 
 const Container = styledComponents.div`
   display: flex;
-  
+  align-items: stretch;
 `
+const daysInWeek = getDaysInWeek();
+const today = getToday();
+
+console.log("🚀 ~ file: Column.js ~ line 29 ~ daysInWeek", daysInWeek)
+
 
 function App() {
   const [state, setState] = useState(intitialData);
@@ -142,12 +146,13 @@ function App() {
           const tasks = column.taskIds.map(taskId => state.tasks[taskId]);
 
           return <Column 
-              key={column.id} 
-              column={column} 
-              tasks={tasks} 
-              index={index}
-              style={{ margin: '20px'}}
-            />;
+                  key={column.id} 
+                  column={column} 
+                  tasks={tasks} 
+                  index={index}
+                  day={daysInWeek[index]}
+                  isToday={ checkToday(today, daysInWeek[index]) }
+                />;
         })}
       </Container>
     </DragDropContext>
